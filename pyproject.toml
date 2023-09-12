@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ogadpy"
+version = "0.0.1"
+authors = [
+  { name="Oliver Driver", email="o.driver22@imperial.ac.uk" },
+]
+description = "Utilities I've used in my PhD"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
