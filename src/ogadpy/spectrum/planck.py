@@ -16,6 +16,7 @@ def planck_function(temperature, wavelength=None, frequency=None, wavenumber=Non
         return ((2*h*c**2*wavenumber**3))*(1/(np.exp(h*c*wavenumber/(kb*temperature))-1))
 
 
+# TODO: frequency, wavenumber dependant variables
 def planck_wvl_plot(t, wvl, add_text=True, ax=None, unit=1e-9, **kwargs):
     """Plot the Planck function for a given temperature and wavelength range."""
     import matplotlib.pyplot as plt

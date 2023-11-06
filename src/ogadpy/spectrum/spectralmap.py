@@ -53,14 +53,16 @@ def wavelength_to_rgb(wavelength, gamma=0.8):
         B = 0.0
     return (R, G, B, A)
 
-clim = (279, 751)
+# Wavelength limits (nm).
+clim = (279, 751) 
+#TODO: frequency limits 
 
 def get_norm():
     import matplotlib.pyplot as plt
     return plt.Normalize(*clim)
 
 
-def spectralmap():
+def spectralmap(): # TODO: frequency map
     # Define a spectral colourmap
     import matplotlib.pyplot as plt
     import numpy as np
@@ -71,7 +73,7 @@ def spectralmap():
 
 
 def plot_spectrum(wvls=None, ax=None, yvals=None, frac_yaxis=0.1, n_cols=100, units=1e-9, **kwargs):
-    """Plot a spectral patch in the current axis."""
+    """Plot a spectral patch in the current axis."""# TODO: frequency plot
     
     import matplotlib.pyplot as plt
     import numpy as np
