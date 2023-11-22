@@ -10,15 +10,18 @@ import numpy as np
 
 
 class DatasetPlot(ABC):
-    def __init__(self, dataset: xr.Dataset, ax=None, **kwargs):
+    def __init__(self, dataset: xr.Dataset):
         self.dataset = dataset
 
     def plot(self, *dims, plot_var=None, **kwargs):
-        plot_var = plot_var if plot_var is not None else self.default_var()
-
         dim_kwargs = {k: v for k, v in kwargs.items() if k in self.dataset.dims}
         kwargs = {k: v for k, v in kwargs.items() if k not in self.dataset.dims}
-        to_plot = self.dataset[plot_var].sel(**dim_kwargs)
+
+        if isinstance(self.dataset, xr.Dataset):
+            plot_var = plot_var if plot_var is not None else self.default_var()
+            to_plot = self.dataset[plot_var].sel(**dim_kwargs)
+        else:
+            to_plot = self.dataset.sel(**dim_kwargs)
 
         remaining_dims = self.remaining_dims(dims + tuple(dim_kwargs.keys()))
 
@@ -60,6 +63,9 @@ class DatasetPlot(ABC):
         ...
 
     def default_var(self):
+        if isinstance(self.dataset, xr.DataArray):
+            return self.dataset.name
+
         var = [i for i in self.dataset.data_vars][0]
 
         if len(self.dataset.data_vars) > 1:
@@ -87,7 +93,7 @@ class DatasetPlot(ABC):
 class DatasetPlot2D(DatasetPlot):
     """Wrapper for plt.pcolormesh"""
 
-    def _plot(self, x_dim, y_dim, plot_data, ax, **kwargs):
+    def _plot(self, x_dim, y_dim, plot_data, ax, cb_kwargs={}, **kwargs):
         im = ax.pcolormesh(
             self.dataset[x_dim],
             self.dataset[y_dim],
@@ -98,7 +104,7 @@ class DatasetPlot2D(DatasetPlot):
         self.label_axes(x_dim, y_dim, ax)
         d = make_axes_locatable(ax)
         cax = d.append_axes("right", size="5%", pad=0.05)
-        cb = plt.colorbar(im, cax=cax)
+        cb = plt.colorbar(im, cax=cax, **cb_kwargs)
         cax.set_ylabel(plot_data.name)
 
         return (ax, cax)
