@@ -19,7 +19,10 @@ class DatasetPlot(ABC):
 
         if isinstance(self.dataset, xr.Dataset):
             plot_var = plot_var if plot_var is not None else self.default_var()
-            to_plot = self.dataset[plot_var].sel(**dim_kwargs)
+            try:
+                to_plot = self.dataset[plot_var].sel(**dim_kwargs)
+            except KeyError:
+                to_plot = self.dataset[plot_var].sel(**dim_kwargs, method="nearest")
         else:
             to_plot = self.dataset.sel(**dim_kwargs)
 
@@ -48,7 +51,10 @@ class DatasetPlot(ABC):
                 _, ax = plt.subplots()
             else:
                 ax = next(axes)
-            data_at_point = to_plot.sel(**fixed_vars)
+            try:
+                data_at_point = to_plot.sel(**fixed_vars)
+            except KeyError:
+                data_at_point = to_plot.sel(**fixed_vars, method="nearest")
             plot_returns.append(self._plot(*dims, data_at_point, ax=ax, **kwargs))
             self.set_title(fixed_vars, ax)
 
@@ -59,8 +65,7 @@ class DatasetPlot(ABC):
         return tuple(return_val)
 
     @abstractmethod
-    def _plot(self, *dims, plot_data, ax, **kwargs) -> tuple[plt.Axes, ...]:
-        ...
+    def _plot(self, *dims, plot_data, ax, **kwargs) -> tuple[plt.Axes, ...]: ...
 
     def default_var(self):
         if isinstance(self.dataset, xr.DataArray):

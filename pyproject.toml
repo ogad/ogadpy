@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Utilities I've used in my PhD"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD License",

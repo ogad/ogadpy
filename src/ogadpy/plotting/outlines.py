@@ -1,7 +1,10 @@
 # from https://stackoverflow.com/questions/24539296/outline-a-region-in-a-graph
 
 
-def outline_binary(mapimg, extent=None, ax=None, **kwargs):
+from numpy import logical_xor
+
+
+def outline_binary(mapimg, extent=None, ax=None, logspaced_xs=False, **kwargs):
     import numpy as np
     import matplotlib.pyplot as plt
 
@@ -48,12 +51,21 @@ def outline_binary(mapimg, extent=None, ax=None, **kwargs):
     #   at this point let's assume it has extents (x0, y0)..(x1,y1) on the axis
     #   drawn with origin='lower'
     # with this information we can rescale our points
-    segments[:, 0] = x0 + (x1 - x0) * segments[:, 0] / mapimg.shape[1]
+    if logspaced_xs:
+        segments[:, 0] = 10 ** (
+            np.log10(x0)
+            + (np.log10(x1) - np.log10(x0)) * segments[:, 0] / mapimg.shape[1]
+        )
+    else:
+        segments[:, 0] = x0 + (x1 - x0) * segments[:, 0] / mapimg.shape[1]
+
     segments[:, 1] = y0 + (y1 - y0) * segments[:, 1] / mapimg.shape[0]
 
     # and now there isn't anything else to do than plot it
     if "color" not in kwargs:
         kwargs["color"] = (1, 0, 0, 0.5)
-    if "linewidth" not in kwargs:
+    if "linewidth" not in kwargs and "lw" not in kwargs:
         kwargs["linewidth"] = 3
+    if "alpha" not in kwargs:
+        kwargs["alpha"] = 0.5
     ax.plot(segments[:, 0], segments[:, 1], **kwargs)
